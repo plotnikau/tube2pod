@@ -26,4 +26,5 @@ steps:
     when:
       event:
         include:
+          - push
           - tag
