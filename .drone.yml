@@ -23,8 +23,6 @@ steps:
       from_secret: docker_username
     password:
       from_secret: docker_password
-    when:
-      event:
-        include:
-          - push
-          - tag
+  when:
+    event:
+      - tag
