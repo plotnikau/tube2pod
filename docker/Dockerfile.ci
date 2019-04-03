@@ -1,7 +1,6 @@
 FROM jrottenberg/ffmpeg:alpine
-WORKDIR /app
 RUN pwd
 RUN ls
-COPY /go/src/github.com/plotnikau/tube2pod/tube2pod /app/tube2pod
+COPY tube2pod /app/tube2pod
 ENTRYPOINT []
 CMD ["/app/tube2pod"]
