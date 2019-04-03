@@ -24,4 +24,6 @@ steps:
     password:
       from_secret: docker_password
     when:
-      event: tag
+      event:
+        include:
+          - tag
