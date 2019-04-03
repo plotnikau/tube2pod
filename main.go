@@ -166,7 +166,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 		return false, empty, empty
 	}
 
-	log.Info("==> Downloading video: ", vid.Title)
+	log.Debug("==> Downloading video: ", vid.Title)
 	fmtBestAudio := vid.Formats.Best(ytdl.FormatAudioBitrateKey)
 
 	//filename := tmpDir + vid.Title + extVideo
@@ -176,7 +176,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 	defer file.Close()
 	vid.Download(fmtBestAudio[0], file)
 
-	log.Info("==> Video done")
+	log.Debug("==> Video done")
 
 	return true, vid.Title, fileId
 }
@@ -187,14 +187,14 @@ func extractAudio(fileId string) (success bool) {
 	fnVideo := getVideoFilename(fileId)
 	fnAudio := getAudioFilename(fileId)
 
-	log.Debug(fnVideo + " -> " + fnAudio)
+	log.Debug("convert " + fnVideo + " -> " + fnAudio)
 
 	ffmpeg, err := exec.LookPath("ffmpeg")
 	if err != nil {
 		log.Error("ffmpeg not found")
 		return false
 	} else {
-		log.Info("==> Extracting audio...")
+		log.Debug("==> Extracting audio...")
 		cmd := exec.Command(ffmpeg, "-y", "-loglevel", "quiet", "-i", fnVideo, "-vn", fnAudio)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
@@ -203,8 +203,7 @@ func extractAudio(fileId string) (success bool) {
 			log.Error("Failed to extract audio:", err)
 			return false
 		} else {
-			log.Info()
-			log.Info("==> Audio done")
+			log.Debug("==> Audio done")
 			return true
 		}
 	}
@@ -239,7 +238,6 @@ func uploadToArchive(fileId string, title string, prefix string) (success bool) 
 	req.Header.Add("X-Archive-Meta-Mediatype", "audio")
 	req.Header.Add("X-Archive-Meta-Title", title)
 	authString := "LOW " + archiveAuthString
-	log.Debug(authString)
 	req.Header.Add("Authorization", authString)
 
 	client := &http.Client{}
