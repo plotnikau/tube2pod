@@ -25,11 +25,13 @@ const (
 )
 
 const (
-	archiveBaseUrl       = "http://s3.us.archive.org/"
-	archiveItemPrefix    = "youtube-audio-"
-	archiveAuthStringKey = "ARCHIVE_AUTH_STRING"
-	telegramBotTokenKey  = "TELEGRAM_BOT_TOKEN"
-	empty                = ""
+	archiveBaseUrl        = "http://s3.us.archive.org/"
+	archiveItemPrefix     = "youtube-audio-"
+	archiveSearchQueryUrl = "https://archive.org/advancedsearch.php?q="
+	archiveSearchParams   = "&rows=100&page=1&callback=callback&save=yes&output=rss"
+	archiveAuthStringKey  = "ARCHIVE_AUTH_STRING"
+	telegramBotTokenKey   = "TELEGRAM_BOT_TOKEN"
+	empty                 = ""
 )
 
 var (
@@ -149,7 +151,9 @@ func processYoutubeLink(url string, bot *tb.Bot, message *tb.Message) (success b
 	log.Info("==> Successfully uploaded to archive.org: ", title)
 	log.Info("==> Upload to archive took ", durationUpload)
 
-	bot.Send(message.Sender, "==> Your archive prefix: "+archivePrefix)
+	playlistUrl := archiveSearchQueryUrl + archivePrefix + archiveSearchParams
+	bot.Send(message.Sender, "==> Your playlists (RSS): "+playlistUrl)
+
 	return true, id
 }
 
