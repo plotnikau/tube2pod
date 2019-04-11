@@ -1,1 +1,1 @@
-# tube2pod :: creating podcast stream from your favourite youtube videos / channels
+# tube2pod :: podcast from youtube videos
