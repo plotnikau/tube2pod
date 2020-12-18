@@ -33,7 +33,7 @@ jobs:
 
     - name: Build
       id: build
-      run: go build -v ./... -o tube2pod
+      run: go build -o tube2pod -v ./...
 
     #- name: Test
     #  run: go test -v ./...
