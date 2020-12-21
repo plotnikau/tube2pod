@@ -89,6 +89,8 @@ func do() {
 
 	prepareInfra()
 
+	log.Debug("Starting bot")
+
 	bot, _ = setupTelegramBot(telegramBotToken)
 
 	setupWorker()
