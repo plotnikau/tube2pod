@@ -37,7 +37,7 @@ jobs:
 
     - name: Build
       id: build
-      run: go build -o tube2pod -v ./...
+      run: CGO_ENABLED=0 GOOS=linux go build -o tube2pod -v ./...
 
     ## Builds te docker image
     - name: Build the Docker image
