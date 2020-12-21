@@ -50,7 +50,7 @@ jobs:
         ## the name of our image
         name: plotnikau/tube2pod
         ## tag
-        tag: ${{ steps.get_version.outputs.VERSION }}
+        tags: "latest,${{ steps.get_version.outputs.VERSION }}"
         ## Here we pass in our Docker Username
         username: ${{ secrets.DOCKER_USERNAME }}
         ## and our Docker password which
