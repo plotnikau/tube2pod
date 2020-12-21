@@ -89,8 +89,6 @@ func do() {
 
 	prepareInfra()
 
-	log.Debug("Starting bot")
-
 	bot, _ = setupTelegramBot(telegramBotToken)
 
 	setupWorker()
@@ -149,7 +147,7 @@ func setupWorker() {
 }
 
 func downloadWorker() {
-	log.Debug("Download Worker started")
+	log.Debug("Download Worker starting")
 
 	for {
 		task, ok := <-downloadChan
@@ -190,7 +188,7 @@ func downloadWorker() {
 }
 
 func convertWorker() {
-	log.Debug("Convert Worker started")
+	log.Debug("Convert Worker starting")
 	for {
 		task, ok := <-convertChan
 
@@ -226,7 +224,7 @@ func convertWorker() {
 }
 
 func uploadWorker() {
-	log.Debug("Upload Worker started")
+	log.Debug("Upload Worker starting")
 	for {
 		task, ok := <-uploadChan
 
