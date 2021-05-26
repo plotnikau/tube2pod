@@ -305,7 +305,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 		HTTPClient: http.DefaultClient,
 	}
 
-	downloader := downloader.Downloader{OutputDir: tmpDir, Client: client}
+	dl := downloader.Downloader{OutputDir: tmpDir, Client: client}
 
 	ctx := context.Background()
 	vid, err := client.GetVideoContext(ctx, url)
@@ -319,7 +319,15 @@ func downloadVideo(url string) (success bool, title string, id string) {
 
 	fileId := vid.ID
 	filename := fileId + extVideo
-	err = downloader.Download(ctx, vid, &vid.Formats[0], filename)
+
+	var audioFormats = vid.Formats.Type("audio")
+	var format = &vid.Formats[0]
+	if len(audioFormats) > 0 {
+		audioFormats.Sort()
+		format = &audioFormats[0]
+	}
+
+	err = dl.Download(ctx, vid, format, filename)
 	if err != nil {
 		log.Error("Failed to download video")
 		return false, empty, empty
