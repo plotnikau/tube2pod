@@ -307,7 +307,10 @@ func updateSentMessage(sentMessage *tb.Message, text string) (*tb.Message, error
 }
 
 func cleanup(fileId string, message *tb.Message) {
-	os.Remove(getAudioFilename(fileId))
+	filenames, _ := filepath.Glob(tmpDir + fileId + "*.mp3")
+	for _, filename := range filenames {
+		os.Remove(filename)
+	}
 	os.Remove(getVideoFilename(fileId))
 	bot.Delete(message)
 }
@@ -372,8 +375,15 @@ func extractAudio(fileId string) (success bool) {
 			log.Error("Failed to extract audio:", err)
 			return false
 		} else {
-			log.Debug("==> Audio done")
-			return true
+			fnSegments := getAudioFilenamePattern(fileId)
+			cmd = exec.Command(ffmpeg, "-y", "-i", fnAudio, "-loglevel", "quiet", "-c", "copy", "-map", "0", "-segment_time", "00:45:00", "-f", "segment", "-vn", fnSegments)
+			if err = cmd.Run(); err != nil {
+				log.Error("Failed to extract audio:", err)
+				return false
+			} else {
+				log.Debug("==> Audio done")
+				return true
+			}
 		}
 	}
 
@@ -429,13 +439,26 @@ func uploadToArchive(fileId string, title string, prefix string) (success bool) 
 }
 
 func sendAudio(id string, title string, chat *tb.Chat) {
-	filename := getAudioFilename(id)
-	a := &tb.Audio{File: tb.FromDisk(filename), Title: title, Caption: title, FileName: title}
-	bot.Send(chat, a)
+	filenames, _ := filepath.Glob(tmpDir + id + ".0*.mp3")
+	for _, filename := range filenames {
+		split := strings.Split(filename, ".")
+		//filename := getAudioFilename(id)
+		t := title + " : " + split[1]
+		a := &tb.Audio{File: tb.FromDisk(filename), Title: t, Caption: t, FileName: t}
+		_, err := bot.Send(chat, a)
+		if err != nil {
+			log.Error("Failed to send audio:", err)
+			return
+		}
+	}
 }
 
 func getAudioFilename(id string) string {
 	return tmpDir + id + extAudio
+}
+
+func getAudioFilenamePattern(id string) string {
+	return tmpDir + id + ".%02d" + extAudio
 }
 
 func getVideoFilename(id string) string {
