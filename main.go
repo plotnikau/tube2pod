@@ -37,8 +37,9 @@ const (
 )
 
 var (
-	telegramBotToken  = ""
-	archiveAuthString = ""
+	telegramBotToken     = ""
+	archiveAuthString    = ""
+	archiveUploadEnabled = false
 )
 
 // used to pass one job from worker to worker via go channels
@@ -79,9 +80,12 @@ func do() {
 	telegramBotToken = os.Getenv(telegramBotTokenKey)
 
 	if archiveAuthString == "" {
-		log.Error("Env variable ARCHIVE_AUTH_STRING is missing. \nLook here for detailed information: https://archive.org/services/docs/api/ias3.html")
-		return
+		archiveUploadEnabled = false
+		log.Info("Env variable ARCHIVE_AUTH_STRING is missing, no upload to internet archieve will be done, just delivery to telegram. \nIf you want to populate podcast playlist with audio, look here for detailed information: https://archive.org/services/docs/api/ias3.html")
+	} else {
+		archiveUploadEnabled = true
 	}
+
 	if telegramBotToken == "" {
 		log.Error("Env variable TELEGRAM_BOT_TOKEN is missing. \nAsk BotFather to create bot for you: https://telegram.me/BotFather")
 		return
@@ -178,6 +182,8 @@ func downloadWorker() {
 		log.Info("==> Successfully downloaded video: ", id)
 		log.Info("==> Download took ", durationDl)
 
+		bot.Delete(task.message)
+
 		// prepare and trigger audio extraction (put task to convert channel)
 		task.title = title
 		task.videoId = id
@@ -241,26 +247,32 @@ func uploadWorker() {
 		sentMessage := task.message
 		id := task.videoId
 		title := task.title
-		// this archivePrefix will be also used to generate playlist link
-		archivePrefix := archiveItemPrefix + strconv.FormatInt(sentMessage.Chat.ID, 10) + "-"
 
-		// upload to archive.org
-		sentMessage, _ = updateSentMessage(sentMessage, " *Upload to podcast* ... ")
-		ts := time.Now()
-		success := uploadToArchive(id, title, archivePrefix)
-		if !success {
-			updateSentMessage(sentMessage, "Error")
-			continue
+		// send to telegram
+		sendAudio(id, title, sentMessage.Chat)
+
+		if archiveUploadEnabled {
+			// this archivePrefix will be also used to generate playlist link
+			archivePrefix := archiveItemPrefix + strconv.FormatInt(sentMessage.Chat.ID, 10) + "-"
+
+			// upload to archive.org
+			sentMessage, _ = updateSentMessage(sentMessage, " *Upload to podcast* ... ")
+			ts := time.Now()
+			success := uploadToArchive(id, title, archivePrefix)
+			if !success {
+				updateSentMessage(sentMessage, "Error")
+				continue
+			}
+			durationUpload := time.Since(ts)
+			log.Info("==> Successfully uploaded to archive.org: ", title)
+			log.Info("==> Upload to archive took ", durationUpload)
+
+			playlistUrl := archiveSearchQueryUrl + archivePrefix + archiveSearchParams
+
+			updateSentMessage(sentMessage, " *Done!*\n_It will take a couple of minutes to index a new file_\nAdd this [Link]("+playlistUrl+") to your podcast player")
 		}
-		durationUpload := time.Since(ts)
-		log.Info("==> Successfully uploaded to archive.org: ", title)
-		log.Info("==> Upload to archive took ", durationUpload)
 
-		playlistUrl := archiveSearchQueryUrl + archivePrefix + archiveSearchParams
-
-		updateSentMessage(sentMessage, " *Done!*\n_It will take a couple of minutes to index a new file_\nAdd this [Link]("+playlistUrl+") to your podcast player")
-
-		cleanup(id)
+		cleanup(id, sentMessage)
 	}
 
 }
@@ -294,9 +306,10 @@ func updateSentMessage(sentMessage *tb.Message, text string) (*tb.Message, error
 	return sentMessage, err
 }
 
-func cleanup(fileId string) {
+func cleanup(fileId string, message *tb.Message) {
 	os.Remove(getAudioFilename(fileId))
 	os.Remove(getVideoFilename(fileId))
+	bot.Delete(message)
 }
 
 func downloadVideo(url string) (success bool, title string, id string) {
@@ -367,7 +380,9 @@ func extractAudio(fileId string) (success bool) {
 }
 
 func uploadToArchive(fileId string, title string, prefix string) (success bool) {
-
+	if archiveUploadEnabled == false {
+		return false
+	}
 	filename := getAudioFilename(fileId)
 
 	itemId := uuid.New()
@@ -411,6 +426,12 @@ func uploadToArchive(fileId string, title string, prefix string) (success bool) 
 
 	return true
 
+}
+
+func sendAudio(id string, title string, chat *tb.Chat) {
+	filename := getAudioFilename(id)
+	a := &tb.Audio{File: tb.FromDisk(filename), Title: title, Caption: title, FileName: title}
+	bot.Send(chat, a)
 }
 
 func getAudioFilename(id string) string {
