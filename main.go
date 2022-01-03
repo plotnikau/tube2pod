@@ -15,7 +15,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -441,9 +440,9 @@ func uploadToArchive(fileId string, title string, prefix string) (success bool) 
 
 func sendAudio(id string, title string, chat *tb.Chat) {
 	filenames, _ := filepath.Glob(tmpDir + id + ".0*.mp3")
-	//audios := [] tb.Audio{}
-	sort.Reverse(sort.StringSlice(filenames))
-	for _, filename := range filenames {
+	for i := len(filenames) - 1; i >= 0; i-- {
+		filename := filenames[i]
+		//for _, filename := range filenames {
 		split := strings.Split(filename, ".")
 		//filename := getAudioFilename(id)
 		t := title + " : " + split[1]
