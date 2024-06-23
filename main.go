@@ -2,12 +2,6 @@ package main
 
 import (
 	"bytes"
-	"github.com/google/uuid"
-	"github.com/kkdai/youtube/v2"
-	"github.com/kkdai/youtube/v2/downloader"
-	log "github.com/sirupsen/logrus"
-	"golang.org/x/net/context"
-	tb "gopkg.in/tucnak/telebot.v2"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -18,6 +12,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/kkdai/youtube/v2"
+	"github.com/kkdai/youtube/v2/downloader"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/context"
+	tb "gopkg.in/tucnak/telebot.v2"
 )
 
 const (
@@ -109,9 +110,7 @@ func prepareInfra() {
 	log.SetLevel(log.DebugLevel)
 }
 
-//
 // Bot logic
-//
 func setupTelegramBot(botToken string) (*tb.Bot, error) {
 	b, err := tb.NewBot(tb.Settings{
 		Token:  botToken,
@@ -342,7 +341,6 @@ func downloadVideo(url string) (success bool, title string, id string) {
 		audioFormats.Sort()
 		format = &audioFormats[0]
 	}
-
 	err = dl.Download(ctx, vid, format, filename)
 	if err != nil {
 		log.Error("Failed to download video")
