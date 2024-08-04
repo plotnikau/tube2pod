@@ -322,6 +322,8 @@ func downloadVideo(url string) (success bool, title string, id string) {
 
 	dl := downloader.Downloader{OutputDir: tmpDir, Client: client}
 
+	log.Info("starting download")
+
 	ctx := context.Background()
 	vid, err := client.GetVideoContext(ctx, url)
 	if err != nil {
