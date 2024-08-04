@@ -15,7 +15,7 @@ require (
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/bitly/go-simplejson v0.5.1 // indirect
 	github.com/dlclark/regexp2 v1.11.2 // indirect
-	github.com/dop251/goja v0.0.0-20240707163329-b1681fb2a2f5 // indirect
+	github.com/dop251/goja v0.0.0-20240731150404-c665f0b58f6e // indirect
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
