@@ -327,7 +327,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 	ctx := context.Background()
 	vid, err := client.GetVideoContext(ctx, url)
 	if err != nil {
-		log.Error("Failed to get video info")
+		log.Error("Failed to get video info", err)
 		return false, empty, empty
 	}
 
