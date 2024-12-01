@@ -24,7 +24,7 @@ RUN set -x && \
     KEPT_PACKAGES+=(mpv) && \
     KEPT_PACKAGES+=(python3) && \
     TEMP_PACKAGES+=(python3-dev) && \
-    KEPT_PACKAGES+=(python-is-python3) && \
+    #KEPT_PACKAGES+=(python-is-python3) && \
     KEPT_PACKAGES+=(python3-pip) && \
     KEPT_PACKAGES+=(python3-pyxattr) && \
     KEPT_PACKAGES+=(rtmpdump) && \
