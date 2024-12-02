@@ -22,6 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/vbauerster/mpb/v5 v5.4.0 // indirect
+	github.com/wader/goutubedl v0.0.0-20241118160803-5e1bb9940f3c // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/text v0.20.0 // indirect
 )

@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/wader/goutubedl"
+
 	"github.com/google/uuid"
-	"github.com/kkdai/youtube/v2"
-	"github.com/kkdai/youtube/v2/downloader"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	tb "gopkg.in/tucnak/telebot.v2"
@@ -317,41 +317,42 @@ func cleanup(fileId string, message *tb.Message) {
 
 func downloadVideo(url string) (success bool, title string, id string) {
 
-	client := youtube.Client{
-		HTTPClient: http.DefaultClient,
-	}
+	//client := youtube.Client{
+	//	HTTPClient: http.DefaultClient,
+	//}
 
-	dl := downloader.Downloader{OutputDir: tmpDir, Client: client}
+	//dl := downloader.Downloader{OutputDir: tmpDir, Client: client}
 
 	log.Info("starting download")
 
-	ctx := context.Background()
-	vid, err := client.GetVideoContext(ctx, url)
+	result, err := goutubedl.New(context.Background(), url, goutubedl.Options{})
 	if err != nil {
 		log.Error("Failed to get video info", err)
 		return false, empty, empty
 	}
 
-	log.Debug("==> Downloading video: ", vid.Title)
-	//fmtBestAudio := vid.Formats.FindByQuality("medium")
-
-	fileId := vid.ID
+	title = result.Info.Title
+	log.Debug("==> Downloading video: ", title)
+	fileId := result.Info.ID
 	filename := fileId + extVideo
 
-	var audioFormats = vid.Formats.Type("audio")
-	var format = &vid.Formats[0]
-	if len(audioFormats) > 0 {
-		audioFormats.Sort()
-		format = &audioFormats[0]
-	}
-	err = dl.Download(ctx, vid, format, filename)
+	downloadResult, err := result.Download(context.Background(), "best")
 	if err != nil {
 		log.Error("Failed to download video")
 		return false, empty, empty
 	}
+	defer downloadResult.Close()
+	f, err := os.Create(filename)
+	if err != nil {
+		log.Error("Failed to save downloaded video to file")
+		return false, empty, empty
+	}
+	defer f.Close()
+	io.Copy(f, downloadResult)
+
 	log.Debug("==> Video done")
 
-	return true, vid.Title, fileId
+	return true, title, fileId
 }
 
 func extractAudio(fileId string) (success bool) {
