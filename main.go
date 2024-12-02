@@ -92,7 +92,7 @@ func do() {
 		return
 	}
 
-	log.Info("Starting...")
+	log.Info("Starting everything...")
 	prepareInfra()
 
 	bot, _ = setupTelegramBot(telegramBotToken)
