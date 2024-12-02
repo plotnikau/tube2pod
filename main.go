@@ -334,7 +334,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 	title = result.Info.Title
 	log.Debug("==> Downloading video: ", title)
 	fileId := result.Info.ID
-	filename := fileId + extVideo
+	filename := getVideoFilename(fileId)
 
 	downloadResult, err := result.Download(context.Background(), "best")
 	if err != nil {
