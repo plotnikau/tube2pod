@@ -338,7 +338,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 
 	downloadResult, err := result.Download(context.Background(), "best")
 	if err != nil {
-		log.Error("Failed to download video")
+		log.Error("Failed to download video", err)
 		return false, empty, empty
 	}
 	defer downloadResult.Close()
