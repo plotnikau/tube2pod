@@ -6,7 +6,8 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/kkdai/youtube/v2 v2.10.1
 	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/net v0.31.0
+	github.com/wader/goutubedl v0.0.0-20241118160803-5e1bb9940f3c
+	golang.org/x/net v0.33.0
 	gopkg.in/tucnak/telebot.v2 v2.5.0
 )
 
@@ -22,7 +23,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/vbauerster/mpb/v5 v5.4.0 // indirect
-	github.com/wader/goutubedl v0.0.0-20241118160803-5e1bb9940f3c // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/text v0.20.0 // indirect
 )
