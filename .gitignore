@@ -4,3 +4,4 @@ tmp/
 buildWithSecrets.sh
 tube2pod
 launch.json
+.DS_Store
