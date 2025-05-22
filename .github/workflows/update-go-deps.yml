@@ -1,0 +1,27 @@
+name: Update Go Dependencies
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ^1.22
+
+      - name: Update Go modules
+        run: |
+          go get -u ./...
+          go mod tidy
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update Go dependencies"
+          branch: ${{ github.ref_name }}
