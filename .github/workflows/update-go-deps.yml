@@ -25,3 +25,12 @@ jobs:
         with:
           commit_message: "chore: update Go dependencies"
           branch: ${{ github.ref_name }}
+
+      - name: Set and push new patch tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          IFS='.' read -r major minor patch <<<"${latest_tag#v}"
+          new_patch=$((patch + 1))
+          new_tag="v${major}.${minor}.${new_patch}"
+          git tag "$new_tag"
+          git push origin "$new_tag"
