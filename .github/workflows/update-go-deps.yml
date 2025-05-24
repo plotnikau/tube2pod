@@ -1,4 +1,4 @@
-name: Update Go Dependencies
+name: Update and tag
 
 on:
   workflow_dispatch:
