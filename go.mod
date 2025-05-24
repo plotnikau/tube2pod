@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/google/uuid v1.6.0
 	github.com/sirupsen/logrus v1.9.3
-	github.com/wader/goutubedl v0.0.0-20250514215504-c420f6890bd6
+	github.com/wader/goutubedl v0.0.0-20250522162618-113312aa330e
 	golang.org/x/net v0.40.0
 	gopkg.in/tucnak/telebot.v2 v2.5.0
 )
