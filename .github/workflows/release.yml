@@ -9,6 +9,7 @@ on:
     workflows: ["Update and tag"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
 
