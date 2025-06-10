@@ -47,7 +47,7 @@ jobs:
           ## the name of our image
           name: plotnikau/tube2pod
           ## tag
-          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          #latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo $latest_tag
           tags: "latest,${{ latest_tag }}"
           ## Here we pass in our Docker Username
