@@ -56,5 +56,3 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           ## and our Docker password which
           password: ${{ secrets.DOCKER_PWD }}
-
-
