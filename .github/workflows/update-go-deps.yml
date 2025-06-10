@@ -47,9 +47,9 @@ jobs:
           ## the name of our image
           name: plotnikau/tube2pod
           ## tag
-          #latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          echo $latest_tag
-          tags: "latest,${{ latest_tag }}"
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo $last_tag
+          tags: "latest,${{ last_tag }}"
           ## Here we pass in our Docker Username
           username: ${{ secrets.DOCKER_USERNAME }}
           ## and our Docker password which
