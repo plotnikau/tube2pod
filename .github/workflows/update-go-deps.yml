@@ -38,11 +38,9 @@ jobs:
           git tag "$new_tag"
           git push origin "$new_tag"
 
-      ## Builds te docker image
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag tube2pod:${{ steps.get_version.outputs.VERSION }}
 
-      ## Publishes our image to Docker Hub 😎
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
