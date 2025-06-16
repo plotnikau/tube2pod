@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -127,6 +128,25 @@ func setupTelegramBot(botToken string) (*tb.Bot, error) {
 		const usageInfo = "This bot creates your personal podcast from videos selected by you. \nSend youtube video links to tube2pod bot and it will create your own youtube audio podcast-feed."
 		text := "Hello, " + m.Sender.FirstName + "\n" + usageInfo
 		b.Send(m.Sender, text)
+	})
+
+	b.Handle("/cleanup", func(m *tb.Message) {
+		files, err := filepath.Glob(tmpDir + "*")
+		if err != nil {
+			b.Send(m.Sender, "Error while cleaning up: "+err.Error())
+			return
+		}
+
+		count := 0
+		for _, file := range files {
+			if err := os.Remove(file); err != nil {
+				log.Error("Failed to remove file:", file, err)
+				continue
+			}
+			count++
+		}
+
+		b.Send(m.Sender, fmt.Sprintf("Cleaned up %d temporary files", count))
 	})
 
 	b.Handle(tb.OnText, func(m *tb.Message) {
