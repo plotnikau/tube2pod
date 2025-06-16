@@ -321,7 +321,7 @@ func sendMessage(toUser *tb.User, text string) (*tb.Message, error) {
 
 func updateSentMessage(sentMessage *tb.Message, text string) (*tb.Message, error) {
 	s, i := sentMessage.MessageSig()
-	storedMessage := tb.StoredMessage{s, i}
+	storedMessage := tb.StoredMessage{MessageID: s, ChatID: i}
 	sentMessage, err := bot.Edit(storedMessage, sentMessage.Text+text, tb.ModeMarkdown)
 	return sentMessage, err
 }
@@ -412,7 +412,7 @@ func extractAudio(fileId string) (success bool) {
 }
 
 func uploadToArchive(fileId string, title string, prefix string) (success bool) {
-	if archiveUploadEnabled == false {
+	if !archiveUploadEnabled {
 		return false
 	}
 	filename := getAudioFilename(fileId)
