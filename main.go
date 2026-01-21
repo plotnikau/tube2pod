@@ -356,7 +356,7 @@ func downloadVideo(url string) (success bool, title string, id string) {
 	fileId := result.Info.ID
 	filename := getVideoFilename(fileId)
 
-	downloadResult, err := result.Download(context.Background(), "best")
+	downloadResult, err := result.Download(context.Background(), "bestaudio")
 	if err != nil {
 		log.Error("Failed to download video", err)
 		return false, empty, empty
