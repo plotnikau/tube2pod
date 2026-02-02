@@ -26,15 +26,6 @@ func (m *MockConverter) ExtractAudio(fileId string) bool {
 	return args.Bool(0)
 }
 
-type MockUploader struct {
-	mock.Mock
-}
-
-func (m *MockUploader) UploadToArchive(fileId string, title string, prefix string) bool {
-	args := m.Called(fileId, title, prefix)
-	return args.Bool(0)
-}
-
 type MockBot struct {
 	mock.Mock
 }
@@ -68,7 +59,7 @@ func (m *MockBot) Delete(msg tb.Editable) error {
 
 func TestProcessMessage_InvalidLink(t *testing.T) {
 	mockBot := new(MockBot)
-	processor := NewProcessor(nil, nil, nil, mockBot, false)
+	processor := NewProcessor(nil, nil, mockBot)
 
 	message := &tb.Message{
 		Text:   "not a link",
@@ -85,7 +76,7 @@ func TestProcessMessage_InvalidLink(t *testing.T) {
 func TestHandleDownload_Success(t *testing.T) {
 	mockDownloader := new(MockDownloader)
 	mockBot := new(MockBot)
-	processor := NewProcessor(mockDownloader, nil, nil, mockBot, false)
+	processor := NewProcessor(mockDownloader, nil, mockBot)
 
 	sender := &tb.User{FirstName: "Test"}
 	message := &tb.Message{Text: "https://youtube.com/watch?v=123", Sender: sender}
@@ -116,7 +107,7 @@ func TestHandleDownload_Success(t *testing.T) {
 func TestHandleConvert_Success(t *testing.T) {
 	mockConverter := new(MockConverter)
 	mockBot := new(MockBot)
-	processor := NewProcessor(nil, mockConverter, nil, mockBot, false)
+	processor := NewProcessor(nil, mockConverter, mockBot)
 
 	sentMsg := &tb.Message{
 		Text: "*Download* ...",
@@ -141,9 +132,8 @@ func TestHandleConvert_Success(t *testing.T) {
 }
 
 func TestHandleUpload_Success(t *testing.T) {
-	mockUploader := new(MockUploader)
 	mockBot := new(MockBot)
-	processor := NewProcessor(nil, nil, mockUploader, mockBot, true)
+	processor := NewProcessor(nil, nil, mockBot)
 
 	chat := &tb.Chat{ID: 123}
 	sentMsg := &tb.Message{
@@ -156,12 +146,9 @@ func TestHandleUpload_Success(t *testing.T) {
 	// Mock SendAudio (it uses Glob, so we might need to handle that or mock it)
 	// For now, let's assume it doesn't find any files in the test environment
 
-	mockBot.On("Edit", mock.Anything, mock.Anything, mock.Anything).Return(&tb.Message{ID: 456, Chat: chat}, nil)
-	mockUploader.On("UploadToArchive", "VideoID", "Title", mock.Anything).Return(true)
 	mockBot.On("Delete", mock.Anything).Return(nil)
 
 	processor.HandleUpload(task)
 
 	mockBot.AssertExpectations(t)
-	mockUploader.AssertExpectations(t)
 }

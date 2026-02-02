@@ -13,8 +13,7 @@ import (
 )
 
 const (
-	archiveAuthStringKey = "ARCHIVE_AUTH_STRING"
-	telegramBotTokenKey  = "TELEGRAM_BOT_TOKEN"
+	telegramBotTokenKey = "TELEGRAM_BOT_TOKEN"
 
 	DOWNLOAD_WORKERS = 5
 	CONVERT_WORKERS  = 2
@@ -22,14 +21,7 @@ const (
 )
 
 func main() {
-	archiveAuthString := os.Getenv(archiveAuthStringKey)
 	telegramBotToken := os.Getenv(telegramBotTokenKey)
-
-	archiveUploadEnabled := true
-	if archiveAuthString == "" {
-		archiveUploadEnabled = false
-		log.Info("Env variable ARCHIVE_AUTH_STRING is missing, no upload to internet archieve will be done, just delivery to telegram. \nIf you want to populate podcast playlist with audio, look here for detailed information: https://archive.org/services/docs/api/ias3.html")
-	}
 
 	if telegramBotToken == "" {
 		log.Error("Env variable TELEGRAM_BOT_TOKEN is missing. \nAsk BotFather to create bot for you: https://telegram.me/BotFather")
@@ -46,9 +38,8 @@ func main() {
 
 	downloader := &platform.YoutubeDownloader{}
 	converter := &platform.FfmpegConverter{}
-	uploader := &platform.ArchiveUploader{AuthString: archiveAuthString}
 
-	processor := app.NewProcessor(downloader, converter, uploader, bot, archiveUploadEnabled)
+	processor := app.NewProcessor(downloader, converter, bot)
 
 	setupHandlers(bot, processor)
 

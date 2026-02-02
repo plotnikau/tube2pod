@@ -11,10 +11,9 @@ import (
 func TestFullWorkflow_Integration(t *testing.T) {
 	mockDownloader := new(MockDownloader)
 	mockConverter := new(MockConverter)
-	mockUploader := new(MockUploader)
 	mockBot := new(MockBot)
 
-	processor := NewProcessor(mockDownloader, mockConverter, mockUploader, mockBot, true)
+	processor := NewProcessor(mockDownloader, mockConverter, mockBot)
 
 	sender := &tb.User{FirstName: "Test"}
 	chat := &tb.Chat{ID: 123}
@@ -31,13 +30,12 @@ func TestFullWorkflow_Integration(t *testing.T) {
 	mockDownloader.On("Download", mock.Anything, message.Text).Return(true, "Title", "VideoID")
 	mockBot.On("Delete", message).Return(nil)
 
-	// 2. Convert & 3. Upload (Multiple Edit calls)
+	// 2. Convert & 3. Delivery (Multiple Edit calls)
 	mockBot.On("Edit", mock.Anything, mock.Anything, mock.Anything).Return(func(msg tb.Editable, what interface{}, options ...interface{}) *tb.Message {
 		return &tb.Message{ID: 100, Chat: chat, Text: what.(string)}
 	}, nil)
 
 	mockConverter.On("ExtractAudio", "VideoID").Return(true)
-	mockUploader.On("UploadToArchive", "VideoID", "Title", mock.Anything).Return(true)
 	mockBot.On("Delete", mock.MatchedBy(func(msg tb.Editable) bool {
 		m, ok := msg.(*tb.Message)
 		return ok && m.ID == 100
@@ -62,7 +60,7 @@ func TestFullWorkflow_Integration(t *testing.T) {
 		case <-tick:
 			// Check if all expectations were met
 			// This is a bit hacky but works for this case
-			if len(mockUploader.Calls) > 0 {
+			if len(mockConverter.Calls) > 0 {
 				completed = true
 			}
 		}
@@ -77,5 +75,4 @@ func TestFullWorkflow_Integration(t *testing.T) {
 	mockBot.AssertExpectations(t)
 	mockDownloader.AssertExpectations(t)
 	mockConverter.AssertExpectations(t)
-	mockUploader.AssertExpectations(t)
 }
