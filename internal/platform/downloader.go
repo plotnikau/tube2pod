@@ -7,7 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/wader/goutubedl"
-	"main.go/internal/app"
+	"github.com/plotnikau/tube2pod/internal/app"
 )
 
 type YoutubeDownloader struct{}

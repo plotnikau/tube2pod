@@ -3,7 +3,6 @@ package platform
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -11,7 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
-	"main.go/internal/app"
+	"github.com/plotnikau/tube2pod/internal/app"
 )
 
 type ArchiveUploader struct {
@@ -55,7 +54,7 @@ func (a *ArchiveUploader) UploadToArchive(fileId string, title string, prefix st
 	}
 
 	defer res.Body.Close()
-	resBody, _ := ioutil.ReadAll(res.Body)
+	resBody, _ := io.ReadAll(res.Body)
 
 	log.Debug(res.StatusCode)
 	log.Debug(string(resBody))

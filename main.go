@@ -8,8 +8,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	tb "gopkg.in/tucnak/telebot.v2"
 
-	"main.go/internal/app"
-	"main.go/internal/platform"
+	"github.com/plotnikau/tube2pod/internal/app"
+	"github.com/plotnikau/tube2pod/internal/platform"
 )
 
 const (

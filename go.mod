@@ -1,4 +1,4 @@
-module main.go
+module github.com/plotnikau/tube2pod
 
 go 1.24.0
 

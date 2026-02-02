@@ -5,7 +5,7 @@ import (
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
-	"main.go/internal/app"
+	"github.com/plotnikau/tube2pod/internal/app"
 )
 
 type FfmpegConverter struct{}
