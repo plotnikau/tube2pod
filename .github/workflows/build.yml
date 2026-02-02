@@ -35,8 +35,8 @@ jobs:
       id: build
       run: go build -o tube2pod -v ./...
 
-    #- name: Test
-    #  run: go test -v ./...
+    - name: Test
+      run: go test -v ./...
 
 #  build-and-publish:
 #    runs-on: ubuntu-latest
