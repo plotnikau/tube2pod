@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
   workflow_dispatch:
 
 jobs:
@@ -31,4 +31,4 @@ jobs:
           name: plotnikau/tube2pod
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PWD }}
-          tag_semver: true
+          tags: "${{ github.ref_name }},latest"

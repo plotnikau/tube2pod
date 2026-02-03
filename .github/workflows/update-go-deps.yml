@@ -6,6 +6,9 @@ on:
 jobs:
   update-deps:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,11 +35,14 @@ jobs:
       - name: Set tag
         id: set_tag
         run: |
-          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          echo $latest_tag
-          IFS='.' read -r major minor patch <<<"${latest_tag#v}"
-          new_patch=$((patch + 1))
-          new_tag="v${major}.${minor}.${new_patch}"
+          new_tag=$(date -u +'%Y-%m-%d-%H%M')
+          echo "New tag: $new_tag"
           git tag "$new_tag"
           git push origin "$new_tag"
-          echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+          echo "VERSION=$new_tag" >> $GITHUB_OUTPUT
+
+      - name: Trigger Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run release.yml --ref ${{ steps.set_tag.outputs.VERSION }}
