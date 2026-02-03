@@ -7,7 +7,7 @@ toolchain go1.24.7
 require (
 	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
-	github.com/wader/goutubedl v0.0.0-20260117130237-d1fbf87c637c
+	github.com/wader/goutubedl v0.0.0-20260201172527-8bc0919dd9b3
 	gopkg.in/tucnak/telebot.v2 v2.5.0
 )
 
