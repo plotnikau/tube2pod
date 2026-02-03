@@ -15,11 +15,6 @@ type Converter interface {
 	ExtractAudio(fileId string) bool
 }
 
-// Uploader defines the interface for uploading audio files to an archive.
-type Uploader interface {
-	UploadToArchive(fileId string, title string, prefix string) bool
-}
-
 // Bot defines the interface for interacting with the Telegram bot.
 type Bot interface {
 	Send(to tb.Recipient, what interface{}, options ...interface{}) (*tb.Message, error)

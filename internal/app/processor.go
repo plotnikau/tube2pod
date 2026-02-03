@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -22,26 +21,21 @@ type DataEnvelope struct {
 type Processor struct {
 	downloader Downloader
 	converter  Converter
-	uploader   Uploader
 	bot        Bot
-
-	archiveUploadEnabled bool
 
 	DownloadChan chan DataEnvelope
 	ConvertChan  chan DataEnvelope
 	UploadChan   chan DataEnvelope
 }
 
-func NewProcessor(downloader Downloader, converter Converter, uploader Uploader, bot Bot, archiveUploadEnabled bool) *Processor {
+func NewProcessor(downloader Downloader, converter Converter, bot Bot) *Processor {
 	return &Processor{
-		downloader:           downloader,
-		converter:            converter,
-		uploader:             uploader,
-		bot:                  bot,
-		archiveUploadEnabled: archiveUploadEnabled,
-		DownloadChan:         make(chan DataEnvelope),
-		ConvertChan:          make(chan DataEnvelope),
-		UploadChan:           make(chan DataEnvelope),
+		downloader:   downloader,
+		converter:    converter,
+		bot:          bot,
+		DownloadChan: make(chan DataEnvelope),
+		ConvertChan:  make(chan DataEnvelope),
+		UploadChan:   make(chan DataEnvelope),
 	}
 }
 
@@ -157,25 +151,6 @@ func (p *Processor) HandleUpload(task DataEnvelope) {
 	title := task.Title
 
 	p.SendAudio(id, title, sentMessage.Chat)
-
-	if p.archiveUploadEnabled {
-		archivePrefix := ArchiveItemPrefix + strconv.FormatInt(sentMessage.Chat.ID, 10) + "-"
-
-		sentMessage, _ = p.UpdateSentMessage(sentMessage, " *Upload to podcast* ... ")
-		ts := time.Now()
-		success := p.uploader.UploadToArchive(id, title, archivePrefix)
-		if !success {
-			p.UpdateSentMessage(sentMessage, "Error")
-			return
-		}
-		durationUpload := time.Since(ts)
-		log.Info("==> Successfully uploaded to archive.org: ", title)
-		log.Info("==> Upload to archive took ", durationUpload)
-
-		playlistUrl := ArchiveSearchQueryUrl + archivePrefix + ArchiveSearchParams
-
-		p.UpdateSentMessage(sentMessage, " *Done!*\n_It will take a couple of minutes to index a new file_\nAdd this [Link]("+playlistUrl+") to your podcast player")
-	}
 
 	p.Cleanup(id, sentMessage)
 }

@@ -7,57 +7,21 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
-    outputs:
-      binary: ${{ steps.build.outputs.tube2pod }}
     steps:
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
 
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v5
-      with:
-        go-version: ^1.22
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v4
+      - name: Build
+        run: go build -o tube2pod -v .
 
-    - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
-
-    - name: Build
-      id: build
-      run: go build -o tube2pod -v ./...
-
-    - name: Test
-      run: go test -v ./...
-
-#  build-and-publish:
-#    runs-on: ubuntu-latest
-#    needs: [build]
-#    steps:
-#    ## checks out our project source code
-#    - uses: actions/checkout@v2
-
-    ## Builds our docker image!
-    - name: Build the Docker image
-      if: startsWith(github.ref, 'refs/tags/')
-      run: docker build . --file Dockerfile --tag tube2pod:$(date +%s)
-
-    ## Publishes our image to Docker Hub 😎
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@v5
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        ## the name of our image
-        name: plotnikau/tube2pod
-        ## Here we pass in our Docker Username
-        username: ${{ secrets.DOCKER_USERNAME }}
-        ## and our Docker password which
-        password: ${{ secrets.DOCKER_PWD }}
+      - name: Test
+        run: go test -v ./...
