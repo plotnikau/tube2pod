@@ -7,7 +7,7 @@ import (
 
 // Downloader defines the interface for downloading videos.
 type Downloader interface {
-	Download(ctx context.Context, url string) (success bool, title string, id string)
+	Download(ctx context.Context, url string) (success bool, title string, id string, thumb string)
 }
 
 // Converter defines the interface for extracting audio from video files.

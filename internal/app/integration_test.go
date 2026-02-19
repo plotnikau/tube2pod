@@ -27,7 +27,7 @@ func TestFullWorkflow_Integration(t *testing.T) {
 	// 1. Download
 	sentMsg1 := &tb.Message{ID: 100, Text: "*Download* ...", Chat: chat}
 	mockBot.On("Send", sender, "*Download* ...", mock.Anything).Return(sentMsg1, nil)
-	mockDownloader.On("Download", mock.Anything, message.Text).Return(true, "Title", "VideoID")
+	mockDownloader.On("Download", mock.Anything, message.Text).Return(true, "Title", "VideoID", "ThumbPath")
 	mockBot.On("Delete", message).Return(nil)
 
 	// 2. Convert & 3. Delivery (Multiple Edit calls)
