@@ -12,10 +12,11 @@ import (
 )
 
 type DataEnvelope struct {
-	Message *tb.Message
-	URL     string
-	VideoID string
-	Title   string
+	Message       *tb.Message
+	URL           string
+	VideoID       string
+	Title         string
+	ThumbnailPath string
 }
 
 type Processor struct {
@@ -74,7 +75,7 @@ func (p *Processor) HandleDownload(task DataEnvelope) {
 	ts := time.Now()
 
 	sentMessage, _ := p.SendMessage(message.Sender, "*Download* ...")
-	success, title, id := p.downloader.Download(context.Background(), url)
+	success, title, id, thumb := p.downloader.Download(context.Background(), url)
 	if !success {
 		p.UpdateSentMessage(sentMessage, "\nError occurred")
 		return
@@ -88,6 +89,7 @@ func (p *Processor) HandleDownload(task DataEnvelope) {
 
 	task.Title = title
 	task.VideoID = id
+	task.ThumbnailPath = thumb
 	task.Message = sentMessage
 
 	p.ConvertChan <- task
@@ -149,8 +151,9 @@ func (p *Processor) HandleUpload(task DataEnvelope) {
 	sentMessage := task.Message
 	id := task.VideoID
 	title := task.Title
+	thumb := task.ThumbnailPath
 
-	p.SendAudio(id, title, sentMessage.Chat)
+	p.SendAudio(id, title, thumb, sentMessage.Chat)
 
 	p.Cleanup(id, sentMessage)
 }
@@ -171,16 +174,22 @@ func (p *Processor) Cleanup(fileId string, message *tb.Message) {
 		os.Remove(filename)
 	}
 	os.Remove(GetVideoFilename(fileId))
+	os.Remove(GetThumbnailFilename(fileId))
 	p.bot.Delete(message)
 }
 
-func (p *Processor) SendAudio(id string, title string, chat *tb.Chat) {
+func (p *Processor) SendAudio(id string, title string, thumb string, chat *tb.Chat) {
 	filenames, _ := filepath.Glob(TmpDir + id + ".0*.mp3")
 	for i := len(filenames) - 1; i >= 0; i-- {
 		filename := filenames[i]
 		split := strings.Split(filename, ".")
 		t := title + " : " + split[1]
 		a := &tb.Audio{File: tb.FromDisk(filename), Title: t, Caption: t, FileName: t}
+		if thumb != "" {
+			if _, err := os.Stat(thumb); err == nil {
+				a.Thumbnail = &tb.Photo{File: tb.FromDisk(thumb)}
+			}
+		}
 		_, err := p.bot.Send(chat, a)
 		if err != nil {
 			log.Error("Failed to send audio:", err)

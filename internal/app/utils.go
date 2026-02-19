@@ -11,3 +11,7 @@ func GetAudioFilenamePattern(id string) string {
 func GetVideoFilename(id string) string {
 	return TmpDir + id + ExtVideo
 }
+
+func GetThumbnailFilename(id string) string {
+	return TmpDir + id + ExtThumb
+}

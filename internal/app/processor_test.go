@@ -12,9 +12,9 @@ type MockDownloader struct {
 	mock.Mock
 }
 
-func (m *MockDownloader) Download(ctx context.Context, url string) (bool, string, string) {
+func (m *MockDownloader) Download(ctx context.Context, url string) (bool, string, string, string) {
 	args := m.Called(ctx, url)
-	return args.Bool(0), args.String(1), args.String(2)
+	return args.Bool(0), args.String(1), args.String(2), args.String(3)
 }
 
 type MockConverter struct {
@@ -84,7 +84,7 @@ func TestHandleDownload_Success(t *testing.T) {
 
 	sentMsg := &tb.Message{Text: "*Download* ..."}
 	mockBot.On("Send", sender, "*Download* ...", mock.Anything).Return(sentMsg, nil)
-	mockDownloader.On("Download", mock.Anything, task.URL).Return(true, "Title", "VideoID")
+	mockDownloader.On("Download", mock.Anything, task.URL).Return(true, "Title", "VideoID", "ThumbPath")
 	mockBot.On("Delete", message).Return(nil)
 
 	// We need to capture the output channel to prevent blocking
@@ -98,6 +98,9 @@ func TestHandleDownload_Success(t *testing.T) {
 	}
 	if receivedTask.Title != "Title" {
 		t.Errorf("Expected Title, got %s", receivedTask.Title)
+	}
+	if receivedTask.ThumbnailPath != "ThumbPath" {
+		t.Errorf("Expected ThumbPath, got %s", receivedTask.ThumbnailPath)
 	}
 
 	mockBot.AssertExpectations(t)
