@@ -40,7 +40,10 @@ RUN set -x && \
         && \
     git config --global advice.detachedHead false && \
     # Install yt-dlp via curl
-    curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
+    curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp-real && \
+    chmod a+x /usr/local/bin/yt-dlp-real && \
+    # Create wrapper for yt-dlp to inject SponsorBlock removal
+    printf '#!/bin/bash\nexec /usr/local/bin/yt-dlp-real --sponsorblock-remove sponsor "$@"\n' > /usr/local/bin/yt-dlp && \
     chmod a+x /usr/local/bin/yt-dlp && \
     # Create /config directory
     mkdir -p /config && \

@@ -7,6 +7,7 @@ Hey there! **tube2pod** is a friendly Telegram bot that turns YouTube videos int
 ## ✨ Features
 - **Easy Peasy**: Just send a YouTube link, and the bot does the rest.
 - **Auto-Split**: Large videos are automatically split into 45-minute chunks so they're easy to handle in Telegram.
+- **SponsorBlock**: Automatically removes sponsored segments from videos during download.
 - **Fast & Reliable**: Powered by `yt-dlp` and `ffmpeg` for high-quality audio extraction.
 - **Docker Ready**: Super simple to host yourself.
 
