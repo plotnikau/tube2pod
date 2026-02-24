@@ -28,6 +28,7 @@ Welcome, fellow agent! This project is a Telegram bot that converts YouTube vide
     - `TELEGRAM_BOT_TOKEN`: Required for the bot to start.
 
 ## Recent Changes
+- Implemented SponsorBlock removal for the `sponsor` category. This is achieved via a `yt-dlp` wrapper script in the Docker image that injects the `--sponsorblock-remove sponsor` flag.
 - Removed Archive.org integration (it was deemed obsolete). The bot now focuses purely on Telegram delivery.
 - Updated documentation and added this `AGENTS.md` file.
 
