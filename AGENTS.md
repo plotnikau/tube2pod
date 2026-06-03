@@ -33,7 +33,7 @@ Welcome, fellow agent! This project is a Telegram bot that converts YouTube vide
 - Updated documentation and added this `AGENTS.md` file.
 
 ## Tech Stack
-- Go 1.24
+- Go 1.26
 - [telebot.v2](https://github.com/tucnak/telebot)
 - [goutubedl](https://github.com/wader/goutubedl) (wrapper for yt-dlp)
 - ffmpeg for audio processing
