@@ -52,7 +52,7 @@ Once your bot is running:
 Want to play with the code? Here's the lowdown:
 
 ### Prerequisites
-- [Go](https://go.dev/) (1.24+)
+- [Go](https://go.dev/) (1.26+)
 - [ffmpeg](https://ffmpeg.org/) installed on your path
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) installed on your path
 
